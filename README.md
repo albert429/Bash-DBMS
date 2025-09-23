@@ -1,2 +1,22 @@
 # Bash-DBMS
-A lightweight CLI-based Database Management System built in Bash. Supports creating databases and tables, CRUD operations, datatype checks, and primary key constraints using simple file and directory operations.
+
+A lightweight CLI-based Database Management System built entirely in Bash.  
+It simulates databases and tables using directories and files, and provides basic CRUD operations with datatype validation and primary key constraints.
+
+---
+
+## 📌 Features
+- Create, list, connect, and drop databases  
+- Create, list, and drop tables  
+- Insert, select, update, and delete rows  
+- Column datatype checks (int, string, etc.)  
+- Primary key enforcement  
+- Menu-driven CLI interface  
+
+---
+
+## 🚀 Usage
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/bash-dbms.git
+   cd bash-dbms
