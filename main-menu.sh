@@ -7,13 +7,13 @@ while true; do
         case "$REPLY" in
         1)
             echo -e "Creating a new Database: \n"
-            read -p "Please enter database name: " databaseName
+            read -p "Please enter the database name: " databaseName
             for d in databases/*/; do
                 if [ -d "$d" ]; then
                     d="${d%/}"
                     d2="${d##*/}" ## getting rid of the long name leaving only the directory name
                     if [ "$d2" == "$databaseName" ]; then
-                        echo -e "There is already a database with this name! Please select another name. \n"
+                        echo -e "There is already a database with this name! Please choose another name. \n"
                     else
                         mkdir "databases/$databaseName"
                         echo -e "A new database has been created with the name $databaseName \n"
@@ -27,7 +27,7 @@ while true; do
         2)
             echo -e "Printing Available Databases: \n"
             ## counting available databases in the databases directory.
-            dir_count=0             
+            dir_count=0
             if [ -d databases ]; then
                 for d in databases/*/; do
                     if [ -d "$d" ]; then
@@ -49,20 +49,31 @@ while true; do
             fi
             ;;
         3)
-            ls
-            ;;
-        4)
-            read -p "Please enter database name you wish to drop: " dropDatabase   
+            read -p "Please enter the name of the database you wish to connect to: " connectedDatabase
             for d in databases/*/; do
                 if [ -d "$d" ]; then
                     d="${d%/}"
                     d2="${d##*/}"
-                    if [ "$d2" == "$dropDatabase" ]; then   ## checks if the database you want to get rid of is available
+                    if [ "$d2" == "$connectedDatabase" ]; then ## checks if the database you want to connect to exists
+                        ./databaseMenu.sh "$d2"
+                    else
+                        echo -e "There are no Databases with this name! \n"
+                    fi
+                fi
+            done
+            ;;
+        4)
+            read -p "Please enter the database name you wish to drop: " dropDatabase
+            for d in databases/*/; do
+                if [ -d "$d" ]; then
+                    d="${d%/}"
+                    d2="${d##*/}"
+                    if [ "$d2" == "$dropDatabase" ]; then ## checks if the database you want to get rid of is available
                         read -p "Do you want to continue? (y/n): " confirm
-                        if [[ "$confirm" =~ ^[Yy]$ ]]; then             ## double confirming that You want to delete the database
+                        if [[ "$confirm" =~ ^[Yy]$ ]]; then ## double confirming that You want to delete the database
                             echo "Continuing..."
                             rmdir "$d"
-                            echo -e "The Database named $dropDatabase has been removed! \n" 
+                            echo -e "The Database named $dropDatabase has been removed! \n"
                         else
                             echo -e "Aborted. \n"
                             exit 1
@@ -77,7 +88,7 @@ while true; do
             exit
             ;;
         *)
-            echo -e "please select one of choices, $REPLY is out of range.\n"   ## makes sure that the choices is not out of range
+            echo -e "please select one of choices, $REPLY is out of range.\n" ## makes sure that the choices is not out of range
             ;;
         esac
         break
