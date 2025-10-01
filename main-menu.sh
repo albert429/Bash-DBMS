@@ -79,28 +79,10 @@ while true; do
                             echo "Continuing..."
                             rm -r "$d" # Changed from rmdir to rm -r to remove non-empty directories
                             echo -e "The Database named $dropDatabase has been removed! \n"
-                        else                        #!/bin/bash
-                        
-                        # Create databases directory if it doesn't exist
-                        if [ ! -d "databases" ]; then
-                            mkdir -p databases
-                        fi
-                        
-                        echo -e "Welcome to your DataBase Mangement Software. \n"
-                        PS3="Selection : "
-                        # ...existing code...                        #!/bin/bash
-                        
-                        # Create databases directory if it doesn't exist
-                        if [ ! -d "databases" ]; then
-                            mkdir -p databases
-                        fi
-                        
-                        echo -e "Welcome to your DataBase Mangement Software. \n"
-                        PS3="Selection : "
-                        # ...existing code...
+                        else    
                             echo -e "Aborted. \n"
                             exit 1
-                        fi
+                        fi                   
                     else
                         echo -e "There are no Databases with this name! \n"
                     fi
