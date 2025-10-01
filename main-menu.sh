@@ -72,7 +72,7 @@ while true; do
                         read -p "Do you want to continue? (y/n): " confirm
                         if [[ "$confirm" =~ ^[Yy]$ ]]; then ## double confirming that You want to delete the database
                             echo "Continuing..."
-                            rmdir "$d"
+                            rm -r "$d" # Changed from rmdir to rm -r to remove non-empty directories
                             echo -e "The Database named $dropDatabase has been removed! \n"
                         else
                             echo -e "Aborted. \n"

@@ -9,6 +9,29 @@ select ch in "Create a new Table" "List all available tables" "Drop a table" "In
         case "$REPLY" in
         1)
             echo -e "Creating a new Table: \n"
+            read -p "Please enter the table name: " tableName
+            touch "$tableName".csv
+            touch "$tableName".meta
+            echo -e "A new table has been created with the name $tableName \n"
+            echo -e "Please define your table structure: \n"
+            first_coloumn_flag=1
+            while true; do
+                read -p "Please enter the column name or type 'done' to finish: " columnName
+                if [ "$columnName" == "done" ]; then
+                    break
+                fi
+                read -p "Please enter the data type for $columnName (e.g., integer, string): " dataType
+                echo "$columnName:$dataType" >> "$tableName".meta
+
+                if [ $first_coloumn_flag -eq 1 ]; then
+                    echo -n "$columnName" >> "$tableName".csv
+                    first_coloumn_flag=0
+                else
+                    echo -n ",$columnName" >> "$tableName".csv
+                fi
+
+                echo -e "Column $columnName with data type $dataType added to table $tableName \n"
+            done   
             ;;
         2)
             echo -e "Listing all available tables: \n"
