@@ -1,5 +1,5 @@
 #!/bin/bash
-
+validDataTypes=("int" "string")
 echo "$1"
 cd "databases/$1" || return
 
@@ -24,17 +24,19 @@ while true; do
                     if [ "$columnName" == "done" ]; then
                         break
                     fi
-                    read -p "Please enter the data type for $columnName (e.g., integer, string): " dataType
-                    echo "$columnName:$dataType" >>"$tableName".meta
-
-                    if [ $first_coloumn_flag -eq 1 ]; then
-                        echo -n "$columnName" >>"$tableName".csv
-                        first_coloumn_flag=0
+                    read -p "Please enter a valid data type for $columnName (valid datatypes are: int, string): " dataType
+                    if [[ " ${validDataTypes[@]} " =~ " $dataType " ]]; then
+                        echo "$columnName:$dataType" >>"$tableName".meta
+                        if [ $first_coloumn_flag -eq 1 ]; then
+                            echo -n "$columnName" >>"$tableName".csv
+                            first_coloumn_flag=0
+                        else
+                            echo -n ",$columnName" >>"$tableName".csv
+                        fi
+                        echo -e "Column $columnName with data type $dataType added to table $tableName \n"
                     else
-                        echo -n ",$columnName" >>"$tableName".csv
+                        echo "invalid datatype! Please try again"
                     fi
-
-                    echo -e "Column $columnName with data type $dataType added to table $tableName \n"
                 done
             fi
             ;;
@@ -75,6 +77,6 @@ while true; do
             echo -e "please select one of choices, $REPLY is out of range.\n" ## makes sure that the choices is not out of range
             ;;
         esac
-        break;
+        break
     done
 done
