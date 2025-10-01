@@ -35,9 +35,18 @@ select ch in "Create a new Table" "List all available tables" "Drop a table" "In
             ;;
         2)
             echo -e "Listing all available tables: \n"
+            ls *.csv 2> /dev/null | sed 's/\.csv$//'
             ;;
         3)
             echo -e "Dropping a table \n"
+            read -p "Please enter the table name you want to drop: " dropTable
+            if [ -f "$dropTable".csv ]; then
+                rm "$dropTable".csv
+                rm "$dropTable".meta
+                echo -e "The table named $dropTable has been removed! \n"
+            else
+                echo -e "Table $dropTable does not exist. \n"
+            fi
             ;;
         4)
             echo -e "Inserting into a table \n"
