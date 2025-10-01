@@ -13,21 +13,13 @@ while true; do
         1)
             echo -e "Creating a new Database: \n"
             read -p "Please enter the database name: " databaseName
-            for d in databases/*/; do
-                if [ -d "$d" ]; then
-                    d="${d%/}"
-                    d2="${d##*/}" ## getting rid of the long name leaving only the directory name
-                    if [ "$d2" == "$databaseName" ]; then
-                        echo -e "There is already a database with this name! Please choose another name. \n"
-                    else
-                        mkdir "databases/$databaseName"
-                        echo -e "A new database has been created with the name $databaseName \n"
-                    fi
-                else
-                    mkdir "databases/$databaseName" ## If there is no any databases available, this conditon is here to make the first one
-                    echo -e "A new database has been created with the name $databaseName \n"
-                fi
-            done
+
+            if [ -d "databases/$databaseName" ]; then
+                echo -e "There is already a database with this name! Please choose another name. \n"
+            else
+                mkdir "databases/$databaseName"
+                echo -e "A new database has been created with the name $databaseName \n"
+            fi
             ;;
         2)
             echo -e "Printing Available Databases: \n"
@@ -55,39 +47,28 @@ while true; do
             ;;
         3)
             read -p "Please enter the name of the database you wish to connect to: " connectedDatabase
-            for d in databases/*/; do
-                if [ -d "$d" ]; then
-                    d="${d%/}"
-                    d2="${d##*/}"
-                    if [ "$d2" == "$connectedDatabase" ]; then ## checks if the database you want to connect to exists
-                        ./databaseMenu.sh "$d2"
-                    else
-                        echo -e "There are no Databases with this name! \n"
-                    fi
-                fi
-            done
+            if [ -d "databases/$connectedDatabase" ]; then
+                ./databaseMenu.sh "$connectedDatabase"
+            else
+                echo -e "There are no Databases with this name! \n"
+            fi
             ;;
         4)
             read -p "Please enter the database name you wish to drop: " dropDatabase
-            for d in databases/*/; do
-                if [ -d "$d" ]; then
-                    d="${d%/}"
-                    d2="${d##*/}"
-                    if [ "$d2" == "$dropDatabase" ]; then ## checks if the database you want to get rid of is available
-                        read -p "Do you want to continue? (y/n): " confirm
-                        if [[ "$confirm" =~ ^[Yy]$ ]]; then ## double confirming that You want to delete the database
-                            echo "Continuing..."
-                            rm -r "$d" # Changed from rmdir to rm -r to remove non-empty directories
-                            echo -e "The Database named $dropDatabase has been removed! \n"
-                        else    
-                            echo -e "Aborted. \n"
-                            exit 1
-                        fi                   
-                    else
-                        echo -e "There are no Databases with this name! \n"
-                    fi
+            if [ -d "databases/$dropDatabase" ]; then
+                read -p "Do you want to continue? (y/n): " confirm
+                if [[ "$confirm" =~ ^[Yy]$ ]]; then ## double confirming that You want to delete the database
+                    echo "Continuing..."
+                    rm -r "$d" # Changed from rmdir to rm -r to remove non-empty directories
+                    echo -e "The Database named $dropDatabase has been removed! \n"
+                else
+                    echo -e "Aborted. \n"
+                    exit 1
                 fi
-            done
+            else
+                echo -e "There are no Databases with this name! \n"
+            fi
+
             ;;
         5)
             exit
