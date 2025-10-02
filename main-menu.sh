@@ -5,7 +5,24 @@ if [ ! -d "databases" ]; then
     mkdir -p databases
 fi
 
-echo -e "Welcome to your DataBase Mangement Software. \n"
+# ASCII Art Header
+cat << "EOF"
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║           ██████╗ ██████╗ ███╗   ███╗███████╗                ║
+║           ██╔══██╗██╔══██╗████╗ ████║██╔════╝                ║
+║           ██║  ██║██████╔╝██╔████╔██║███████╗                ║
+║           ██║  ██║██╔══██╗██║╚██╔╝██║╚════██║                ║
+║           ██████╔╝██████╔╝██║ ╚═╝ ██║███████║                ║
+║           ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝                ║
+║                                                              ║
+║        Welcome to your Database Management System v1.0       ║
+║                    Built with Bash                           ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+EOF
+
+echo -e " \n"
 PS3="Selection : "
 while true; do
     select ch in "Create a new DataBase" "List all available Databases" "Connect to a DataBase" "Drop a DataBase" "Exit"; do
