@@ -96,7 +96,7 @@ while true; do
                                 case $dataType in
                                 int)
                                     if [[ "$value" =~ ^[0-9]+$ ]]; then
-                                        echo "Stored $value under the column $pk"
+                                        echo "Your value is valid within the dataType"
                                     else
                                         echo "Error: Must be an integer!"
                                         valid=false
@@ -105,7 +105,7 @@ while true; do
                                     ;;
                                 string)
                                     if [[ "$value" =~ ^[a-zA-Z\ ]+$ ]]; then
-                                        echo "Stored $value under the column $pk"
+                                        echo "Your value is valid within the dataType"
                                     else
                                         echo "Error: Must contain only letters!"
                                         valid=false
@@ -115,18 +115,19 @@ while true; do
                                 if $isPK; then
                                     for forb in "${forbiddenValues[@]}"; do
                                         if [[ "$value" == "$forb" ]]; then
-                                            valid=false;
+                                            valid=false
                                             echo "This is the primary key! Its value can't match another value in the same column!"
-                                            break;
+                                            break
                                         elif [[ "$value" == "" ]]; then
-                                            valid=false;
+                                            valid=false
                                             echo "This is the primary key! Its value can't be NULL or Empty"
-                                            break;
+                                            break
                                         fi
-                                        
+
                                     done
                                 fi
                                 if $valid; then
+                                    echo "Stored $value under the column $pk"
                                     values[$pk]="$value"
                                     break # Exit validation loop
                                 fi
@@ -152,12 +153,143 @@ while true; do
             ;;
         5)
             echo -e "Selecting from a table \n"
+            read -p "Select the table you want to read from : " selectTable
+            if [ -f "$selectTable".csv ]; then
+                columns=($(awk -F: '{print $1}' "$selectTable.meta"))
+                echo -e "Select whether you would like to display the entire table or a certain row \n"
+                while true; do
+                    select ch in "The entire table" "Select a row" "Exit"; do
+                        case "$REPLY" in
+                        1)
+                            echo -e "Displaying the entire table: \n"
+                            column -t -s',' "$selectTable.csv"
+                            ;;
+                        2)
+                            echo -e "select the column you would like to search with \n"
+                            select col in "${columns[@]}" "done"; do
+                                if [[ "$col" == "done" ]]; then
+                                    break 2
+                                elif [[ -n "$col" ]]; then
+                                    mapfile -t rows < <(awk -F, -v col="$REPLY" 'NR > 1 {print $col}' "$selectTable.csv")
+                                    echo -e "Select which row you would like to select: \n"
+                                    select row in "${rows[@]}"; do
+                                        if [[ -n "$row" ]]; then
+                                            actualRow=$((REPLY + 1))
+                                            awk -F, -v row="$actualRow" 'NR == 1 || NR == row' "$selectTable.csv" | column -t -s','
+                                            break 2
+                                        fi
+                                    done
+                                fi
+                            done
+
+                            ;;
+                        3)
+                            echo -e "Exiting \n"
+                            break 2
+                            ;;
+                        esac
+                        echo ""
+                        break 2
+                    done
+                done
+            else
+                echo "There is no table with the name $selectTable !"
+            fi
             ;;
         6)
             echo -e "Deleting from a table \n"
+            read -p "Select the table you want to delete from : " deleteTable
+            if [ -f "$deleteTable".csv ]; then
+                columns=($(awk -F: '{print $1}' "$deleteTable.meta"))
+                echo -e "Select whether you would like to delete the entire table or a certain row \n"
+                while true; do
+                    select ch in "The entire table" "Select a row" "Exit"; do
+                        case "$REPLY" in
+                        1)
+                            echo -e "Deleting the entire table: \n"
+                            sed -i '2,$d' "$deleteTable.csv"
+                            echo -e "All rows in the table $deleteTable has been deleted"
+                            ;;
+                        2)
+                            echo -e "select the column you would like to search with \n"
+                            select col in "${columns[@]}" "done"; do
+                                if [[ "$col" == "done" ]]; then
+                                    break 2
+                                elif [[ -n "$col" ]]; then
+                                    mapfile -t rows < <(awk -F, -v col="$REPLY" 'NR > 1 {print $col}' "$selectTable.csv")
+                                    echo -e "select the row you would like to delete: \n"
+                                    select row in "${rows[@]}"; do
+                                        if [[ -n "$row" ]]; then
+                                            actualRow=$((REPLY + 1))
+                                            sed -i "${actualRow}d" "$deleteTable.csv"
+                                            echo -e "The selected row has been deleted!"
+                                            break 2
+                                        fi
+                                    done
+                                fi
+                            done
+
+                            ;;
+                        3)
+                            echo -e "Exiting \n"
+                            break 2
+                            ;;
+                        esac
+                        echo ""
+                        break 2
+                    done
+                done
+            else
+                echo "There is no table with the name $selectTable !"
+            fi
             ;;
         7)
             echo -e "Updating a table \n"
+            read -p "Select the table you want to Update : " UpdateTable
+            if [ -f "$UpdateTable".csv ]; then
+                columns=($(awk -F: '{print $1}' "$deleteTable.meta"))
+                echo -e "Select whether you would like to add columns to the table or a certain row \n"
+                while true; do
+                    select ch in "The e" "Select a row" "Exit"; do
+                        case "$REPLY" in
+                        1)
+                            echo -e "Deleting the entire table: \n"
+                            sed -i '2,$d' "$deleteTable.csv"
+                            echo -e "All rows in the table $deleteTable has been deleted"
+                            ;;
+                        2)
+                            echo -e "select the column you would like to search with \n"
+                            select col in "${columns[@]}" "done"; do
+                                if [[ "$col" == "done" ]]; then
+                                    break 2
+                                elif [[ -n "$col" ]]; then
+                                    mapfile -t rows < <(awk -F, -v col="$REPLY" 'NR > 1 {print $col}' "$selectTable.csv")
+                                    echo -e "select the row you would like to delete: \n"
+                                    select row in "${rows[@]}"; do
+                                        if [[ -n "$row" ]]; then
+                                            actualRow=$((REPLY + 1))
+                                            sed -i "${actualRow}d" "$deleteTable.csv"
+                                            echo -e "The selected row has been deleted!"
+                                            break 2
+                                        fi
+                                    done
+                                fi
+                            done
+
+                            ;;
+                        3)
+                            echo -e "Exiting \n"
+                            break 2
+                            ;;
+                        esac
+                        echo ""
+                        break 2
+                    done
+                done
+            else
+                echo "There is no table with the name $selectTable !"
+            fi
+            ;;
             ;;
         8)
             echo -e "Returning to main menu \n"
