@@ -56,8 +56,9 @@ while true; do
             fi
             ;;
         2)
-            echo -e "Listing all available tables: \n"
+            echo -e "Listing all available tables:"
             ls *.csv 2>/dev/null | sed 's/\.csv$//'
+            echo "\n"
             ;;
         3)
             echo -e "Dropping a table \n"
@@ -152,13 +153,66 @@ while true; do
             ;;
         5)
             echo -e "Selecting from a table \n"
+            echo -e "Selecting from a table \n"
+            read -p "Please enter the table name you want to select from: " selectTable
+
+            if [ -f "$selectTable".csv ]; then
+                echo -e "\nDisplaying data from table: $selectTable\n"
+
+                # Display the table in a formatted way
+                column -t -s, "$selectTable".csv
+                echo ""
+            else
+                echo -e "Table $selectTable does not exist. \n"
+            fi
+            ;;
             ;;
         6)
             echo -e "Deleting from a table \n"
+            echo -e "Deleting from a table \n"
+            read -p "Please enter the table name: " deleteTable
+            
+            if [ -f "$deleteTable".csv ]; then
+                # Get the primary key column
+                pkColumn=$(awk -F: '$3 == "PRIMARY_KEY" {print $1}' "$deleteTable.meta")
+                
+                if [ -z "$pkColumn" ]; then
+                    echo "No primary key defined for this table!"
+                else
+                    # Find which column number the PK is
+                    columns=($(awk -F: '{print $1}' "$deleteTable.meta"))
+                    pkIndex=1
+                    for i in "${!columns[@]}"; do
+                        if [ "${columns[$i]}" == "$pkColumn" ]; then
+                            pkIndex=$((i + 1))
+                            break
+                        fi
+                    done
+                    
+                    echo -e "\nCurrent data in $deleteTable:"
+                    column -t -s, "$deleteTable".csv
+                    echo ""
+                    
+                    read -p "Enter the $pkColumn value of the row you want to delete: " pkValue
+                    
+                    # Check if the value exists
+                    if grep -q "^[^,]*,$pkValue," "$deleteTable".csv || grep -q "^$pkValue," "$deleteTable".csv; then
+                        # Delete the row (keep header)
+                        sed -i "/^[^,]*,$pkValue,/d; /^$pkValue,/d" "$deleteTable".csv
+                        echo -e "Row with $pkColumn = $pkValue has been deleted! \n"
+                    else
+                        echo -e "No row found with $pkColumn = $pkValue \n"
+                    fi
+                fi
+            else
+                echo -e "Table $deleteTable does not exist. \n"
+            fi
+            ;;
             ;;
         7)
             echo -e "Updating a table \n"
-            ;;
+            # Updating records in a table
+        ;;
         8)
             echo -e "Returning to main menu \n"
             cd ../..

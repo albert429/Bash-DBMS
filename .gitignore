@@ -1,2 +1,5 @@
 # LibreOffice lock files (a documnet opener)
 .~lock.*#
+
+# Ignore databases directory and all its contents
+databases/*
