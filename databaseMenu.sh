@@ -216,7 +216,7 @@ while true; do
                                 if [[ "$col" == "done" ]]; then
                                     break 2
                                 elif [[ -n "$col" ]]; then
-                                    mapfile -t rows < <(awk -F, -v col="$REPLY" 'NR > 1 {print $col}' "$selectTable.csv")
+                                    mapfile -t rows < <(awk -F, -v col="$REPLY" 'NR > 1 {print $col}' "$deleteTable.csv")
                                     echo -e "select the row you would like to delete: \n"
                                     select row in "${rows[@]}"; do
                                         if [[ -n "$row" ]]; then
@@ -247,49 +247,30 @@ while true; do
             echo -e "Updating a table \n"
             read -p "Select the table you want to Update : " UpdateTable
             if [ -f "$UpdateTable".csv ]; then
-                columns=($(awk -F: '{print $1}' "$deleteTable.meta"))
-                echo -e "Select whether you would like to add columns to the table or a certain row \n"
-                while true; do
-                    select ch in "The e" "Select a row" "Exit"; do
-                        case "$REPLY" in
-                        1)
-                            echo -e "Deleting the entire table: \n"
-                            sed -i '2,$d' "$deleteTable.csv"
-                            echo -e "All rows in the table $deleteTable has been deleted"
-                            ;;
-                        2)
-                            echo -e "select the column you would like to search with \n"
-                            select col in "${columns[@]}" "done"; do
-                                if [[ "$col" == "done" ]]; then
-                                    break 2
-                                elif [[ -n "$col" ]]; then
-                                    mapfile -t rows < <(awk -F, -v col="$REPLY" 'NR > 1 {print $col}' "$selectTable.csv")
-                                    echo -e "select the row you would like to delete: \n"
-                                    select row in "${rows[@]}"; do
-                                        if [[ -n "$row" ]]; then
-                                            actualRow=$((REPLY + 1))
-                                            sed -i "${actualRow}d" "$deleteTable.csv"
-                                            echo -e "The selected row has been deleted!"
-                                            break 2
-                                        fi
-                                    done
-                                fi
-                            done
-
-                            ;;
-                        3)
-                            echo -e "Exiting \n"
-                            break 2
-                            ;;
-                        esac
-                        echo ""
+                columns=($(awk -F: '{print $1}' "$UpdateTable.meta"))
+                echo -e "select the column you would like to search with \n"
+                select col in "${columns[@]}" "Exit"; do
+                    if [[ "$col" == "Exit" ]]; then
                         break 2
-                    done
+                    elif [[ -n "$col" ]]; then
+                        mapfile -t rows < <(awk -F, -v col="$REPLY" 'NR > 1 {print $col}' "$UpdateTable.csv")
+                        echo -e "select the value you wish to update: \n"
+                        select row in "${rows[@]}"; do
+                            if [[ -n "$row" ]]; then
+                                read -p "Enter the new value to replace ($row) with: " newVal
+                                sed -i "s/$row/$newVal/g" "$UpdateTable".csv 
+                                break 2
+                                echo -e "The Value Has been Updated successfuly"
+                            else
+                                echo "Wrong input, please select from the given menu"
+                            fi
+                            
+                        done
+                    fi
                 done
             else
-                echo "There is no table with the name $selectTable !"
+                echo "There is no table with the name $UpdateTable !"
             fi
-            ;;
             ;;
         8)
             echo -e "Returning to main menu \n"
