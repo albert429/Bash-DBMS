@@ -29,7 +29,7 @@ This project simulates databases and tables using directories and files, providi
 
 ### Installation
 ```bash
-git clone [your-repository-url]
+git clone https://github.com/albert429/Bash-DBMS
 cd Bash-DBMS
 chmod +x main-menu.sh databaseMenu.sh
 ```
