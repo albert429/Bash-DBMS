@@ -1,7 +1,8 @@
+# Bash-DBMS
 <div align="center">
-  <img src="assets/BashDBMSimage.png" alt="Bash DBMS Logo" width="200"/>
+  <img src="assets/BashDBMSimage.png" alt="Bash DBMS Logo" width="700"/>
   
-  # Bash-DBMS
+  
   
   A lightweight CLI-based Database Management System built entirely in Bash.
   
