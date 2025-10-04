@@ -38,6 +38,9 @@ chmod +x main-menu.sh databaseMenu.sh
 ```bash
 ./main-menu.sh
 ```
+<div align="center">
+    <img src="assets/cli_ascii.png" alt="Bash DBMS shape" width="700"/>
+</div>
 
 ## 📁 Project Structure
 ```
